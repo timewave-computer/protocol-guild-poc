@@ -8,8 +8,9 @@ use cosmwasm_std::{
 use cw2::set_contract_version;
 use neutron_sdk::{
     bindings::{
-        msg::{MsgSubmitTxResponse, NeutronMsg, IbcFee},
-        query::NeutronQuery, types::ProtobufAny,
+        msg::{IbcFee, MsgSubmitTxResponse, NeutronMsg},
+        query::NeutronQuery,
+        types::ProtobufAny,
     },
     interchain_txs::helpers::get_port_id,
     sudo::msg::{RequestPacket, SudoMsg},
@@ -18,10 +19,13 @@ use neutron_sdk::{
 use prost::Message;
 
 use crate::{
-    msg::{ContractState, ExecuteMsg, InstantiateMsg, QueryMsg, RemoteChainInfo, SudoPayload, OpenAckVersion},
+    msg::{
+        ContractState, ExecuteMsg, InstantiateMsg, OpenAckVersion, QueryMsg, RemoteChainInfo,
+        SudoPayload,
+    },
     state::{
-        CONTRACT_STATE, INTERCHAIN_ACCOUNTS, NEXT_CONTRACT, REMOTE_CHAIN_INFO,
-        REPLY_ID_STORAGE, SUDO_PAYLOAD,
+        CONTRACT_STATE, INTERCHAIN_ACCOUNTS, NEXT_CONTRACT, REMOTE_CHAIN_INFO, REPLY_ID_STORAGE,
+        SUDO_PAYLOAD,
     },
 };
 
@@ -86,8 +90,11 @@ pub fn execute(
 }
 
 /// attempts to advance the state machine
-fn try_tick(deps: ExecuteDeps, env: Env, info: MessageInfo) -> NeutronResult<Response<NeutronMsg>> {
-
+fn try_tick(
+    deps: ExecuteDeps,
+    env: Env,
+    _info: MessageInfo,
+) -> NeutronResult<Response<NeutronMsg>> {
     let current_state = CONTRACT_STATE.load(deps.storage)?;
     match current_state {
         ContractState::Instantiated => try_register_ica(deps, env),
@@ -120,10 +127,9 @@ fn try_register_ica(deps: ExecuteDeps, env: Env) -> NeutronResult<Response<Neutr
 fn try_forward_funds(env: Env, mut deps: ExecuteDeps) -> NeutronResult<Response<NeutronMsg>> {
     // first we verify whether the next contract is ready for receiving the funds
     let next_contract = NEXT_CONTRACT.load(deps.storage)?;
-    let deposit_address_query: Option<String> = deps.querier.query_wasm_smart(
-        next_contract,
-        &QueryMsg::DepositAddress {},
-    )?;
+    let deposit_address_query: Option<String> = deps
+        .querier
+        .query_wasm_smart(next_contract, &QueryMsg::DepositAddress {})?;
 
     // if query returns None, then we error and wait
     let Some(deposit_address) = deposit_address_query else {
@@ -156,7 +162,6 @@ fn try_forward_funds(env: Env, mut deps: ExecuteDeps) -> NeutronResult<Response<
                     .plus_seconds(remote_chain_info.ibc_transfer_timeout.u64())
                     .nanos(),
             };
-            
 
             let protobuf_msg = to_proto_msg_transfer(transfer_msg)?;
 
@@ -372,10 +377,7 @@ fn sudo_error(deps: ExecuteDeps, request: RequestPacket, details: String) -> Std
     Ok(Response::default().add_attribute("method", "sudo_error"))
 }
 
-pub fn save_reply_payload(
-    store: &mut dyn Storage,
-    payload: SudoPayload,
-) -> StdResult<()> {
+pub fn save_reply_payload(store: &mut dyn Storage, payload: SudoPayload) -> StdResult<()> {
     REPLY_ID_STORAGE.save(store, &to_vec(&payload)?)
 }
 

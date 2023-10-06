@@ -36,15 +36,14 @@ pub fn instantiate(
         FALLBACK_SPLIT.save(deps.storage, &split.get_split_config()?.validate()?)?;
     }
 
-    Ok(Response::default()
-        .add_attribute("method", "protocol_guild_splitter_instantiate"))
+    Ok(Response::default().add_attribute("method", "protocol_guild_splitter_instantiate"))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(
     deps: DepsMut,
     env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     deps.api
