@@ -7,7 +7,7 @@
 This project, inspired by [protocol guild aimed at Ethereum contributors](https://protocol-guild.readthedocs.io/en/latest/index.html), aims to improve public good funding in the Cosmos ecosystem by:
 - Curating and increasing discoverability of public goods efforts
 - Making interchain payments to public goods projects simple and convenient
-- Instiling a culture of solidarity to support the unseen and underfunded labour in the ecosystem
+- Instilling a culture of solidarity to support the unseen and underfunded labour in the ecosystem
 
 We are a project built on Neutron. By utilizing IBC and Interchain Accounts, this set of smart contracts enables contributors of all types to be funded across the interchain.
 
