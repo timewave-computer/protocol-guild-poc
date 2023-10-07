@@ -1,32 +1,33 @@
-# protocol guild poc
+# Interchain Protocol Guild - Proof of Concept
 
-## about
+## About
 
-public goods on cosmos are **not** sufficiently funded.
+**Public goods funding in Cosmos is broken.**
 
-this poc aims to solve that.
+This project, inspired by [protocol guild aimed at Ethereum contributors](https://protocol-guild.readthedocs.io/en/latest/index.html), aims to improve public good funding in the Cosmos ecosystem by:
+- Curating and increasing discoverability of public goods efforts
+- Making interchain payments to public goods projects simple and convenient
+- Instiling a culture of solidarity to support the unseen and underfunded labour in the ecosystem
 
-inspired by [protocol guild aimed at Ethereum contributors](https://protocol-guild.readthedocs.io/en/latest/index.html).
+We are a project built on Neutron. By utilizing IBC and Interchain Accounts, this set of smart contracts enables contributors of all types to be funded across the interchain.
 
-by utilizing ICAs and IBC, this set of smart contracts enables contributors of all types to be funded across the interchain.
-
-consider an active cosmwasm developer that wishes to be funded. by "registering" with the protocol guild on neutron, it gains exposure for potential funding from:
-
+Consider an active cosmwasm developer that wishes to be funded. By "registering" with the protocol guild on neutron, they may receive funding from:
 - protocols/chains
 - DAOs
 - various foundations
+- philanthropic whales
 - and more?
 
-we hope that having such options will make our ecosystem to reach a point where entities _not_ contributing for public goods are rare and unusual. not the other way around.
+In the depths of the bear market, we need strong support of our public goods. 
 
-## running the tests
+## Running tests
 
-to run the tests that show protocol guild in action, run
+To run the tests that show protocol guild in action, run
 ```sh
 just simtest
 ```
 
-this will:
+This will:
 
 - spin up a local interchain
 - set up ICS connection between hub and neutron
