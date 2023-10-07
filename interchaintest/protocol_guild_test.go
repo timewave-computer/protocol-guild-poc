@@ -393,8 +393,6 @@ func TestProtocolGuild(t *testing.T) {
 			require.NoError(t, err, "Failed to marshall protocolGuildInstantiateMsg")
 			instantiateMsg := string(str)
 
-			println("instantiate msg: ", instantiateMsg)
-
 			splitterAddress, err = cosmosNeutron.InstantiateContract(ctx, neutronUser.KeyName, splitterCodeIdStr, instantiateMsg, true)
 			require.NoError(t, err)
 			require.NoError(t, testutil.WaitForBlocks(ctx, 5, atom, neutron, osmosis))
@@ -418,10 +416,8 @@ func TestProtocolGuild(t *testing.T) {
 			instantiateMsg = string(str)
 
 			osmoForwarderAddress, err = cosmosNeutron.InstantiateContract(ctx, neutronUser.KeyName, ibcForwarderCodeIdStr, instantiateMsg, true)
-
 			require.NoError(t, err)
 			require.NoError(t, testutil.WaitForBlocks(ctx, 5, atom, neutron, osmosis))
-			println("osmo forwarder address: ", osmoForwarderAddress)
 
 			gaiaForwarderInstantiateMsg := IbcForwarderInstantiateMsg{
 				NextContract:            splitterAddress,
@@ -437,33 +433,35 @@ func TestProtocolGuild(t *testing.T) {
 			instantiateMsg = string(str)
 
 			gaiaForwarderAddress, err = cosmosNeutron.InstantiateContract(ctx, neutronUser.KeyName, ibcForwarderCodeIdStr, instantiateMsg, true)
-
 			require.NoError(t, err)
 			require.NoError(t, testutil.WaitForBlocks(ctx, 5, atom, neutron, osmosis))
+
 			println("gaia forwarder address: ", gaiaForwarderAddress)
+			println("osmo forwarder address: ", osmoForwarderAddress)
 		})
 
 		t.Run("fund contracts with neutron", func(t *testing.T) {
-			err := neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
-				Address: gaiaForwarderAddress,
-				Amount:  500000,
-				Denom:   nativeNtrnDenom,
-			})
-			require.NoError(t, err, "failed to send funds from neutron user to gaiaForwarderAddress")
-
-			err = neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
-				Address: osmoForwarderAddress,
-				Amount:  500000,
-				Denom:   nativeNtrnDenom,
-			})
-			require.NoError(t, err, "failed to send funds from neutron user to osmoForwarderAddress")
-
-			err = neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
-				Address: splitterAddress,
-				Amount:  500000,
-				Denom:   nativeNtrnDenom,
-			})
-			require.NoError(t, err, "failed to send funds from neutron user to splitterAddress")
+			require.NoError(t,
+				neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
+					Address: gaiaForwarderAddress,
+					Amount:  500000,
+					Denom:   nativeNtrnDenom,
+				}),
+				"failed to send funds from neutron user to gaiaForwarderAddress")
+			require.NoError(t,
+				neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
+					Address: osmoForwarderAddress,
+					Amount:  500000,
+					Denom:   nativeNtrnDenom,
+				}),
+				"failed to send funds from neutron user to osmoForwarderAddress")
+			require.NoError(t,
+				neutron.SendFunds(ctx, neutronUser.KeyName, ibc.WalletAmount{
+					Address: splitterAddress,
+					Amount:  500000,
+					Denom:   nativeNtrnDenom,
+				}),
+				"failed to send funds from neutron user to splitterAddress")
 
 			bal, err := neutron.GetBalance(ctx, gaiaForwarderAddress, nativeNtrnDenom)
 			require.NoError(t, err)
@@ -519,10 +517,6 @@ func TestProtocolGuild(t *testing.T) {
 		t.Run("query forwarder deposit addresses", func(t *testing.T) {
 			var response QueryResponse
 
-			type DepositAddress struct{}
-			type DepositAddressQuery struct {
-				DepositAddress DepositAddress `json:"deposit_address"`
-			}
 			depositAddressQuery := DepositAddressQuery{
 				DepositAddress: DepositAddress{},
 			}
@@ -540,19 +534,22 @@ func TestProtocolGuild(t *testing.T) {
 		})
 
 		t.Run("fund forwarder ICAs with some denoms", func(t *testing.T) {
-			err := cosmosOsmosis.SendFunds(ctx, osmoUser.KeyName, ibc.WalletAmount{
-				Address: osmoForwarderICA,
-				Amount:  500000,
-				Denom:   osmosis.Config().Denom,
-			})
-			require.NoError(t, err, "failed to send funds from osmo user to osmoForwarderICA")
 
-			err = cosmosAtom.SendFunds(ctx, gaiaUser.KeyName, ibc.WalletAmount{
-				Address: gaiaForwarderICA,
-				Amount:  500000,
-				Denom:   cosmosAtom.Config().Denom,
-			})
-			require.NoError(t, err, "failed to send funds from osmo user to gaiaForwarderICA")
+			require.NoError(t,
+				cosmosOsmosis.SendFunds(ctx, osmoUser.KeyName, ibc.WalletAmount{
+					Address: osmoForwarderICA,
+					Amount:  500000,
+					Denom:   osmosis.Config().Denom,
+				}),
+				"failed to send funds from osmo user to osmoForwarderICA")
+
+			require.NoError(t,
+				cosmosAtom.SendFunds(ctx, gaiaUser.KeyName, ibc.WalletAmount{
+					Address: gaiaForwarderICA,
+					Amount:  500000,
+					Denom:   cosmosAtom.Config().Denom,
+				}),
+				"failed to send funds from osmo user to gaiaForwarderICA")
 
 			require.NoError(t, testutil.WaitForBlocks(ctx, 5, atom, neutron, osmosis))
 

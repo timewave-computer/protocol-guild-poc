@@ -14,7 +14,9 @@ pub struct InstantiateMsg {
 
 #[cw_serde]
 pub struct DenomSplit {
+    /// denom which we wish to split up
     pub denom: String,
+    /// type of split configuration to be applied
     pub split: SplitType,
 }
 
@@ -43,7 +45,9 @@ pub struct SplitConfig {
 
 #[cw_serde]
 pub struct Receiver {
+    /// address on neutron
     pub addr: String,
+    /// share of the receiver denominated in percentages
     pub share: Uint128,
 }
 

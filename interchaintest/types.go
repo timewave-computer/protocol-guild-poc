@@ -32,9 +32,12 @@ type DenomSplit struct {
 	Type  SplitType `json:"split"`
 }
 
-type QueryResponse struct {
-	Data string `json:"data"`
+// queries
+type DepositAddress struct{}
+type DepositAddressQuery struct {
+	DepositAddress DepositAddress `json:"deposit_address"`
 }
 
-type DepositAddressQuery struct {
+type QueryResponse struct {
+	Data string `json:"data"`
 }
