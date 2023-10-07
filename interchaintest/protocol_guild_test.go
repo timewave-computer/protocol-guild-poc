@@ -261,12 +261,12 @@ func TestProtocolGuild(t *testing.T) {
 	users := ibctest.GetAndFundTestUsers(t, ctx, "default", int64(500_000_000_000), atom, neutron, osmosis)
 
 	// protocol guild recipients
-	protocolGuildRecipients := ibctest.GetAndFundTestUsers(t, ctx, "default", int64(1), neutron, neutron, neutron, neutron, neutron)
+	protocolGuildRecipients := ibctest.GetAndFundTestUsers(t, ctx, "default", int64(1), neutron, neutron, neutron, neutron, neutron, neutron)
 	sdkDevTeam := protocolGuildRecipients[0]
 	cosmwasmMaintainer := protocolGuildRecipients[1]
-	// bugBounty := protocolGuildRecipients[2]
-	// docsUpkeep := protocolGuildRecipients[3]
-	// discordOpsTeam := protocolGuildRecipients[4]
+	bugBounty := protocolGuildRecipients[2]
+	docsUpkeep := protocolGuildRecipients[3]
+	discordOpsTeam := protocolGuildRecipients[4]
 
 	gaiaUser, neutronUser, osmoUser := users[0], users[1], users[2]
 
@@ -350,11 +350,15 @@ func TestProtocolGuild(t *testing.T) {
 								Receivers: []Receiver{
 									{
 										Address: cosmwasmMaintainer.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
-										Share:   "30",
+										Share:   "20",
 									},
 									{
 										Address: sdkDevTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
 										Share:   "70",
+									},
+									{
+										Address: bugBounty.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
+										Share:   "10",
 									},
 								},
 							},
@@ -367,7 +371,15 @@ func TestProtocolGuild(t *testing.T) {
 								Receivers: []Receiver{
 									{
 										Address: sdkDevTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
-										Share:   "100",
+										Share:   "50",
+									},
+									{
+										Address: docsUpkeep.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
+										Share:   "40",
+									},
+									{
+										Address: discordOpsTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix),
+										Share:   "10",
 									},
 								},
 							},
@@ -557,9 +569,9 @@ func TestProtocolGuild(t *testing.T) {
 			queryBalances(splitterAddress, "splitter")
 			queryBalances(sdkDevTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "sdk_dev_team")
 			queryBalances(cosmwasmMaintainer.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "cosmwasm_maintainer")
-			// queryBalances(discordOpsTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "discord_ops_team")
-			// queryBalances(bugBounty.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "bug_bounty")
-			// queryBalances(docsUpkeep.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "docs_upkeep")
+			queryBalances(discordOpsTeam.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "discord_ops_team")
+			queryBalances(bugBounty.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "bug_bounty")
+			queryBalances(docsUpkeep.Bech32Address(cosmosNeutron.Config().Bech32Prefix), "docs_upkeep")
 		}
 
 		t.Run("tick forwarders to forward funds from ica to splitter", func(t *testing.T) {
